@@ -15,3 +15,6 @@ class User(SQLModel, table=True):
     __table_args__ = (
         CheckConstraint('age >= 0 AND age <= 120', name='age_to_120'),
     )
+
+class Role(SQLModel, table=True):
+    role: str = Field(sa_column=Column(String(12), primary_key=True, index=True, unique=True))
