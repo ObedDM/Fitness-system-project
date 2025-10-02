@@ -1,4 +1,4 @@
-import uuid
+import uuid6
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
 from sqlalchemy import String, Column, Numeric, CheckConstraint
@@ -8,7 +8,7 @@ class User_Role(SQLModel, table=True):
     role: str = Field(foreign_key="role.role", primary_key=True)
 
 class User(SQLModel, table=True):
-    user_id: str = Field(default_factory=lambda: str(uuid.uuid7()), primary_key=True, index=True, unique=True)
+    user_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
     name: str
     surname: str
     email: str = Field(sa_column=Column(String(254), unique=True, index=True, nullable=False))
