@@ -28,7 +28,7 @@ class Role(SQLModel, table=True):
 
     users: List[User] = Relationship(back_populates="roles", link_model=User_Role)
 
-class Ingredient_MicroNutriend(SQLModel, table=True):
+class Ingredient_MicroNutrient(SQLModel, table=True):
     ingredient_id: str = Field(foreign_key="ingredient.ingredient_id", primary_key=True)
     nutrient_name: str = Field(foreign_key="micronutrient.name", primary_key=True)
 
