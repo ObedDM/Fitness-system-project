@@ -4,11 +4,11 @@ from typing import Optional, List
 from sqlalchemy import String, Column, Numeric, CheckConstraint, CHAR, TEXT
 
 class User_Role(SQLModel, table=True):
-    user_id: str = Field(foreign_key="user.user_id", primary_key=True)
-    role: str = Field(foreign_key="role.role", primary_key=True)
+    user_id: str = Field(foreign_key="user.user_id", primary_key=True, nullable=False)
+    role: str = Field(foreign_key="role.role", primary_key=True, nullable=False)
 
 class User(SQLModel, table=True):
-    user_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
+    user_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True, nullable=False)
     name: str
     surname: str
     email: str = Field(sa_column=Column(String(254), unique=True, index=True, nullable=False))
@@ -28,7 +28,14 @@ class Role(SQLModel, table=True):
 
     users: List[User] = Relationship(back_populates="roles", link_model=User_Role)
 
+class Ingredient_MicroNutriend(SQLModel, table=True):
+    pass
+
 class MicroNutrient(SQLModel, table=True):
     name: str = Field(primary_key=True, index=True, unique=True, nullable=False)
     category: str = Field(sa_column=Column(String(20), nullable=False))
     unit: str = Field(sa_column=Column(String(8), nullable=False))
+
+class Ingredient(SQLModel, table=True):
+    ingredient_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
+    created_by: str = Field(foreign_key="user.user_id", primary_key=True)
