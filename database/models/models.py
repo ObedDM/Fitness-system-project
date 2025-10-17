@@ -37,6 +37,8 @@ class MicroNutrient(SQLModel, table=True):
     category: str = Field(sa_column=Column(String(20), nullable=False))
     unit: str = Field(sa_column=Column(String(8), nullable=False))
 
+    ingredients: List["Ingredient"] = Relationship(back_populates="micronutrients", link_model=Ingredient_MicroNutrient)
+
 class Ingredient(SQLModel, table=True):
     ingredient_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
     created_by: str = Field(foreign_key="user.user_id", primary_key=True)
@@ -46,3 +48,5 @@ class Ingredient(SQLModel, table=True):
     fat: int = Field(sa_column=Column(Numeric(3), nullable=False))
     carbohydrates: int = Field(sa_column=Column(Numeric(3), nullable=False))
     glycemic_index: int = Field(sa_column=Column(Numeric(4,1), nullable=False))
+
+    micronutrients: List[MicroNutrient] = Relationship(back_populates="micronutrients", link_model=Ingredient_MicroNutrient)
