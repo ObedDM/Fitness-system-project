@@ -1,7 +1,7 @@
 import uuid6
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
-from sqlalchemy import String, Column, Numeric, CheckConstraint, CHAR
+from sqlalchemy import String, Column, Numeric, CheckConstraint, CHAR, TEXT
 
 class User_Role(SQLModel, table=True):
     user_id: str = Field(foreign_key="user.user_id", primary_key=True)
@@ -27,3 +27,8 @@ class Role(SQLModel, table=True):
     role: str = Field(sa_column=Column(String(12), primary_key=True, index=True, unique=True))
 
     users: List[User] = Relationship(back_populates="roles", link_model=User_Role)
+
+class MicroNutrient(SQLModel, table=True):
+    name: str = Field(primary_key=True, index=True, unique=True, nullable=False)
+    category: str = Field(sa_column=Column(String(20), nullable=False))
+    unit: str = Field(sa_column=Column(String(8), nullable=False))
