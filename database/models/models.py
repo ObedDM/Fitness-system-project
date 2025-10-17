@@ -39,3 +39,9 @@ class MicroNutrient(SQLModel, table=True):
 class Ingredient(SQLModel, table=True):
     ingredient_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
     created_by: str = Field(foreign_key="user.user_id", primary_key=True)
+    name: str = Field(nullable=False)
+    calories: int = Field(sa_column=Column(Numeric(4), nullable=False))
+    protein: int = Field(sa_column=Column(Numeric(3), nullable=False))
+    fat: int = Field(sa_column=Column(Numeric(3), nullable=False))
+    carbohydrates: int = Field(sa_column=Column(Numeric(3), nullable=False))
+    glycemic_index: int = Field(sa_column=Column(Numeric(4,1), nullable=False))
