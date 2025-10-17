@@ -1,7 +1,7 @@
 import uuid6
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
-from sqlalchemy import String, Column, Numeric, CheckConstraint
+from sqlalchemy import String, Column, Numeric, CheckConstraint, CHAR
 
 class User_Role(SQLModel, table=True):
     user_id: str = Field(foreign_key="user.user_id", primary_key=True)
@@ -15,6 +15,7 @@ class User(SQLModel, table=True):
     age: Optional[int] = Field(default=None)
     weight: Optional[float] = Field(sa_column=Column(Numeric(5, 2), default=None))
     height: Optional[float] = Field(sa_column=Column(Numeric(3, 2), default=None))
+    password: str = Field(sa_column=Column(CHAR(60), nullable=False))
 
     __table_args__ = (
         CheckConstraint('age >= 0 AND age <= 120', name='age_to_120'),
