@@ -3,7 +3,7 @@ from sqlmodel import SQLModel
 class IngredientBase(SQLModel):
     created_by: str
     name: str
-    calories: str
+    calories: int
     protein: int
     fat: int
     carbohydrates: int
