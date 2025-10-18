@@ -49,4 +49,4 @@ class Ingredient(SQLModel, table=True):
     carbohydrates: int = Field(sa_column=Column(Numeric(3), nullable=False))
     glycemic_index: float = Field(sa_column=Column(Numeric(4,1), nullable=False))
 
-    micronutrients: List[MicroNutrient] = Relationship(back_populates="micronutrients", link_model=Ingredient_MicroNutrient)
+    micronutrients: List[MicroNutrient] = Relationship(back_populates="ingredients", link_model=Ingredient_MicroNutrient)
