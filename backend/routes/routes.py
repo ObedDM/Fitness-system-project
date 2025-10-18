@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from database.connection import get_session
-from database.models.models import User, User_Role, Role
+from database.models.models import User
 from backend.schemas.user import UserCreate, UserRead
 
 from backend.services.user import register_user

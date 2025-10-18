@@ -4,8 +4,8 @@ from sqlmodel import Session
 from database.models.models import User
 from backend.schemas.user import UserCreate
 
-from utils.db_utils import is_existing
-from utils.password_encryption import hash_password
+from backend.utils.db_utils import is_existing
+from backend.utils.password_encryption import hash_password
 
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
