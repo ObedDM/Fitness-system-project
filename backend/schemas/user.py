@@ -7,9 +7,12 @@ class UserBase(SQLModel):
     email: str
 
 class UserCreate(UserBase):
-    surname: str
-    email: str
     password: str
+    age: Optional[int] = None
+    weight: Optional[int] = None
+    height: Optional[int] = None
+
+class UserRead(UserBase):
     age: Optional[int] = None
     weight: Optional[int] = None
     height: Optional[int] = None
