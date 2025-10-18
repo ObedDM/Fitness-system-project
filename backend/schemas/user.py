@@ -3,6 +3,8 @@ from typing import Optional
 
 class UserBase(SQLModel):
     name: str
+    surname: str
+    email: str
 
 class UserCreate(UserBase):
     surname: str
