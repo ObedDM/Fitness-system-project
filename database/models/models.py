@@ -59,3 +59,7 @@ class Ingredient(SQLModel, table=True):
         back_populates="ingredient",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
+
+    __table_args__ = (
+        UniqueConstraint("name", "created_by", name="UNIQUE_NAME_CREATEDBY"),
+    )
