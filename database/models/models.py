@@ -31,6 +31,7 @@ class Role(SQLModel, table=True):
 class Ingredient_MicroNutrient(SQLModel, table=True):
     ingredient_id: str = Field(foreign_key="ingredient.ingredient_id", primary_key=True)
     nutrient_name: str = Field(foreign_key="micronutrient.name", primary_key=True)
+    quantity: int
 
 class MicroNutrient(SQLModel, table=True):
     name: str = Field(primary_key=True, index=True, unique=True, nullable=False)
