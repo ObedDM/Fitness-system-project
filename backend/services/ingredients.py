@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlmodel import Session
 
-from database.models.models import Ingredient
+from database.models.models import Ingredient, Ingredient_MicroNutrient, MicroNutrient
 from backend.schemas.ingredients import IngredientCreate
 
 from backend.utils.db_utils import is_existing
@@ -9,15 +9,38 @@ from backend.utils.db_utils import is_existing
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 def add_ingredient(data: IngredientCreate, session: Session) -> Ingredient:
-    
+
     try:
-        new_ingredient = Ingredient(**data.model_dump())
+
+        new_ingredient = Ingredient(**data.model_dump(exclude={"micronutrients"}))
 
         session.add(new_ingredient)
+        session.flush()
+
+        
+        for name, quantity in (data.micronutrients or {}).items():
+
+            if quantity < 0:
+                raise HTTPException(422, "Quantity cannot have negative values")
+            
+            if not is_existing(session, MicroNutrient, "name", name):
+                raise HTTPException(400, f"Micronutrient {name} does not exist")
+            
+            micronutrient = Ingredient_MicroNutrient(
+                ingredient_id = new_ingredient.ingredient_id,
+                nutrient_name = name,
+                quantity = quantity
+            )
+
+            session.add(micronutrient)
+        
         session.commit()
-        session.refresh(new_ingredient)
 
         return new_ingredient
+    
+    except IntegrityError as e:
+        session.rollback()
+        raise HTTPException(409, f"Integrity error: {str(e.orig)}")
 
     except SQLAlchemyError as e:
         # DB errors

@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel
+from typing import Optional
 
 class IngredientBase(SQLModel):
     created_by: str
@@ -10,7 +11,7 @@ class IngredientBase(SQLModel):
     glycemic_index: float
 
 class IngredientCreate(IngredientBase):
-    pass
+    micronutrients: Optional[dict[str, int]] = None # Name, Quantity
 
 class IngredientRead(IngredientBase):
     pass
