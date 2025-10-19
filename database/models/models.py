@@ -1,7 +1,7 @@
 import uuid6
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
-from sqlalchemy import String, Column, Numeric, CheckConstraint, CHAR, TEXT
+from sqlalchemy import String, Column, Numeric, CheckConstraint, UniqueConstraint, CHAR
 
 class User_Role(SQLModel, table=True):
     user_id: str = Field(foreign_key="user.user_id", primary_key=True, nullable=False)
@@ -33,12 +33,17 @@ class Ingredient_MicroNutrient(SQLModel, table=True):
     nutrient_name: str = Field(foreign_key="micronutrient.name", primary_key=True)
     quantity: int
 
+    ingredient: "Ingredient" = Relationship(back_populates="micronutrient_links")
+    micronutrient: "MicroNutrient" = Relationship(back_populates="ingredient_links")
+
 class MicroNutrient(SQLModel, table=True):
     name: str = Field(primary_key=True, index=True, unique=True, nullable=False)
     category: str = Field(sa_column=Column(String(20), nullable=False))
     unit: str = Field(sa_column=Column(String(8), nullable=False))
 
-    ingredients: List["Ingredient"] = Relationship(back_populates="micronutrients", link_model=Ingredient_MicroNutrient)
+    ingredient_links: List[Ingredient_MicroNutrient] = Relationship(
+        back_populates="micronutrient"
+    )
 
 class Ingredient(SQLModel, table=True):
     ingredient_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
@@ -50,4 +55,7 @@ class Ingredient(SQLModel, table=True):
     carbohydrates: int = Field(sa_column=Column(Numeric(3), nullable=False))
     glycemic_index: float = Field(sa_column=Column(Numeric(4,1), nullable=False))
 
-    micronutrients: List[MicroNutrient] = Relationship(back_populates="ingredients", link_model=Ingredient_MicroNutrient)
+    micronutrient_links: List[Ingredient_MicroNutrient] = Relationship(
+        back_populates="ingredient",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
