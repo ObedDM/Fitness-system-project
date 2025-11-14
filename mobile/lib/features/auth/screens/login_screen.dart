@@ -63,7 +63,7 @@
                       const SizedBox(height: 16),
 
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Forgot your password? text
                           Text(
