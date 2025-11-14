@@ -58,6 +58,39 @@
                           ),
                         ),
                       ),
+
+                      // Blank space
+                      const SizedBox(height: 16),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // Login Button
+                          MaterialButton(
+                            onPressed: () => {},
+                            color: const Color.fromARGB(255, 192, 255, 179),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 16,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: Colors.black,
+                                width: 0.3
+                              )
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
                     ],
                   ),
               ),
