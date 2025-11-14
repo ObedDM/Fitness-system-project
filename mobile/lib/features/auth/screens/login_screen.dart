@@ -63,8 +63,19 @@
                       const SizedBox(height: 16),
 
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          // Forgot your password? text
+                          Text(
+                            'Forgot your password?',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
                           // Login Button
                           MaterialButton(
                             onPressed: () => {},
