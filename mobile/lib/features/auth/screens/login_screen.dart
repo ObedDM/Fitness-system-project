@@ -78,7 +78,9 @@
 
                           // Login Button
                           MaterialButton(
-                            onPressed: () => {},
+                            onPressed: () => {
+                              Navigator.pushNamed(context, '/home')
+                            },
                             color: const Color.fromARGB(255, 192, 255, 179),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 40,
