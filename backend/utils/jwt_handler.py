@@ -2,7 +2,9 @@ from decouple import config
 from typing import Optional, Literal
 from datetime import datetime, timedelta, timezone
 import jwt
+from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 import secrets
+import logging as log
 
 SECRET_KEY = config("SECRET_KEY")
 ALGORITHM = config("ALGORITHM", default="HS256")
@@ -30,4 +32,28 @@ def create_token(data: dict, token_type: Literal['access', 'refresh'], expire_ti
         "jti": secrets.token_hex(16), # Token id
         })
 
-    return jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    return jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)  
+
+def decode_token(token: str) -> Optional[dict]:
+    if token is None:
+        return None
+    
+    else:
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
+            return payload
+
+        except ExpiredSignatureError:
+            log.warning(f"[LOG]: Token has expired")
+            return None
+
+        except InvalidTokenError as e:
+            log.warning(f"[LOG]: Token is invalid - {str(e)}")
+            return None
+        
+        except Exception as e:
+            log.error(f"[LOG]: Unknown exception {type(e).__name__} - {e}", exc_info=True)
+            return None
+
+def is_token_valid(token: str) -> bool:
+    return decode_token(token) is not None
