@@ -9,6 +9,7 @@ class User_Role(SQLModel, table=True):
 
 class User(SQLModel, table=True):
     user_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True, nullable=False)
+    username: str = Field(sa_column=Column(String(20), unique=True, index=True, nullable=False))
     name: str
     surname: str
     email: str = Field(sa_column=Column(String(254), unique=True, index=True, nullable=False))
