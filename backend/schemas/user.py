@@ -14,7 +14,7 @@ class UserCreate(UserBase):
     weight: Optional[float] = None
     height: Optional[float] = None
 
-class UserRead(UserCreate):
+class UserRead(UserBase):
     user_id: str
     name: str
     surname: str
