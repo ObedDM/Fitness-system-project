@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from returns.result import Result, Success, Failure
+from returns.result import Success, Failure
 
 from database.models.models import User
 from backend.utils.password_encryption import verify_password
