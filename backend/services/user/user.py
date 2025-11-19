@@ -45,3 +45,14 @@ def get_users(session: Session) -> UserRead:
     users = session.exec(select(User)).all()
 
     return users
+
+def get_profile(user_id: str, session: Session) -> UserRead:
+    user_data = session.exec(
+        select(User)
+        .where(User.user_id == user_id)
+    ).first()
+
+    if not user_data:
+        raise HTTPException(404, "User not found")
+
+    return user_data
