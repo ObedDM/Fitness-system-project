@@ -14,6 +14,9 @@ def register_user(data: UserCreate, session: Session) -> User:
 
     if is_existing(session, User, "email", data.email):
         raise HTTPException(409, "Email already exists")
+    
+    if is_existing(session, User, "username", data.username):
+        raise HTTPException(409, "Username already exists")
 
     try:
         hashed_pw = hash_password(data.password)
