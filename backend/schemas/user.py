@@ -1,9 +1,10 @@
 from sqlmodel import SQLModel
 from typing import Optional
+from pydantic import EmailStr, Field
 
 class UserBase(SQLModel):
     username: str
-    email: Optional[int] = None
+    email: EmailStr = Field(..., max_length=254)
 
 class UserCreate(UserBase):
     name: str
@@ -14,7 +15,16 @@ class UserCreate(UserBase):
     height: Optional[int] = None
 
 class UserRead(UserCreate):
-    pass
+    user_id: str
+    name: str
+    surname: str
+    age: Optional[int] = None
+    weight: Optional[int] = None
+    height: Optional[int] = None
+    
+    class Config:
+        from_attributes = True
 
-class UserLogin(UserBase):
+class UserLogin(SQLModel):
+    username: str
     password: str
