@@ -19,8 +19,8 @@ class UserRead(UserCreate):
     name: str
     surname: str
     age: Optional[int] = None
-    weight: Optional[int] = None
-    height: Optional[int] = None
+    weight: Optional[float] = None
+    height: Optional[float] = None
     
     class Config:
         from_attributes = True
