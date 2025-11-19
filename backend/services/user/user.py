@@ -1,14 +1,11 @@
 from fastapi import HTTPException
-from sqlmodel import Session
-
-from database.models.models import User
-from backend.schemas.user import UserCreate
-
-from backend.utils.db_utils import is_existing
-from backend.utils.password_encryption import hash_password
-
+from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
+from database.models.models import User
+from backend.schemas.user import UserCreate, UserRead
+from backend.utils.db_utils import is_existing
+from backend.utils.password_encryption import hash_password
 
 def register_user(data: UserCreate, session: Session) -> User:
 
@@ -42,3 +39,9 @@ def register_user(data: UserCreate, session: Session) -> User:
         # Unexpected behavior
         session.rollback()
         raise HTTPException(500, f"Unexpected error: {str(e)}")
+    
+
+def get_users(session: Session) -> UserRead:
+    users = session.exec(select(User)).all()
+
+    return users
