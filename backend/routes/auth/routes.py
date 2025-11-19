@@ -7,10 +7,15 @@ from backend.routes.routes import router
 from backend.services.auth.auth import login, refresh
 from backend.schemas.refresh import RefreshRequest
 
-@router.post('auth/login')
+@router.post('/auth/login')
 async def login_handler(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
-    return login(form_data, session)
+    result = login(form_data, session)
 
-@router.post('auth/refresh')
+    print(f"Access Token:\n{result['access_token']}\n")
+    print(f"Refresh Token:\n{result['refresh_token']}\n")
+
+    return result
+
+@router.post('/auth/refresh')
 async def refresh_handler(data: RefreshRequest):
     return refresh(data)
