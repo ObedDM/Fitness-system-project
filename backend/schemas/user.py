@@ -11,8 +11,8 @@ class UserCreate(UserBase):
     surname: str
     password: str
     age: Optional[int] = None
-    weight: Optional[int] = None
-    height: Optional[int] = None
+    weight: Optional[float] = None
+    height: Optional[float] = None
 
 class UserRead(UserCreate):
     user_id: str
