@@ -2,12 +2,12 @@ from fastapi import HTTPException
 from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from database.models.models import User
-from backend.schemas.user import UserCreate, UserRead
+from database.models.models import User, Role, User_Role
+from backend.schemas.user import UserCreate, UserRead, UserResponse
 from backend.utils.db_utils import is_existing
 from backend.utils.password_encryption import hash_password
 
-def register_user(data: UserCreate, session: Session) -> User:
+def register_user(data: UserCreate, session: Session) -> str:
 
     if is_existing(session, User, "email", data.email):
         raise HTTPException(409, "Email already exists")
@@ -17,13 +17,30 @@ def register_user(data: UserCreate, session: Session) -> User:
 
     try:
         hashed_pw = hash_password(data.password)
-        new_user = User(**data.model_dump(exclude={"password"}), password=hashed_pw)
+        role_name = data.role
 
+        new_user = User(**data.model_dump(exclude={"password", "role"}), password=hashed_pw)
         session.add(new_user)
+        session.flush()
+
+        role = session.exec(
+            select(Role)
+            .where(Role.role == role_name)
+        ).first()
+
+        if not role:
+            raise HTTPException(404, f"Role '{role_name}' not found")
+        
+        user_role = User_Role(
+            user_id=new_user.user_id,
+            role=role.role
+        )
+        session.add(user_role)
+
         session.commit()
         session.refresh(new_user)
 
-        return new_user
+        return "success"
 
     except IntegrityError:
         # If user table constraints fail
@@ -47,12 +64,18 @@ def get_users(session: Session) -> UserRead:
     return users
 
 def get_profile(user_id: str, session: Session) -> UserRead:
-    user_data = session.exec(
-        select(User)
+    result = session.exec(
+        select(User, User_Role.role)
+        .join(User_Role)
         .where(User.user_id == user_id)
     ).first()
 
-    if not user_data:
+    if not result:
         raise HTTPException(404, "User not found")
+    
+    user_data, role = result
 
-    return user_data
+    user_dict = user_data.model_dump(exclude={"password"})
+    user_dict["role"] = role
+    
+    return user_dict
