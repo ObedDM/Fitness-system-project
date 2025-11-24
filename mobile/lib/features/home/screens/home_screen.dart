@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,6 +9,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  Future<void> _checkAuth() async {
+    final isLoggedIn = await _authService.isLoggedIn();
+    if (!isLoggedIn && mounted) {
+      Navigator.pushReplacementNamed(context, '/auth/login');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -22,13 +38,20 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
 
+                // Go to profile button
+                MaterialButton(
+                  onPressed: () => Navigator.pushNamed(context, '/profile'),
+                  child: Text('View Profile'),
+                ),
+
                 // Go back to login screen button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MaterialButton(
-                      onPressed: () => {
-                        Navigator.pushNamed(context, '/login')
+                      onPressed: () async {
+                        await _authService.logout();
+                        Navigator.pushNamed(context, '/auth/login');
                       },
                       color: const Color.fromARGB(255, 76, 194, 102),
                       padding: const EdgeInsets.symmetric(
@@ -43,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       ),
                       child: const Text(
-                        'Go back',
+                        'Log out',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
