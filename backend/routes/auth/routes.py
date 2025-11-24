@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
 
 from database.connection import get_session
-from backend.routes.routes import router
+from backend.routes.router import router
 from backend.services.auth.auth import login, refresh
 from backend.schemas.refresh import RefreshRequest
 
