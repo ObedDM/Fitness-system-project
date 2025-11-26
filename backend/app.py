@@ -7,6 +7,7 @@ from backend.routes.router import router
 
 import backend.routes.auth.routes
 import backend.routes.user.routes
+import backend.routes.ingredients.routes
 
 load_dotenv()
 

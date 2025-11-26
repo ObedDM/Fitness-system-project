@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/login_Screen.dart';
 import 'package:mobile/features/auth/screens/register_screen.dart';
 import 'package:mobile/features/home/screens/home_screen.dart';
+import 'package:mobile/features/ingredients/screens/ingredient_add_screen.dart';
+import 'package:mobile/features/ingredients/screens/ingredient_info_screen.dart';
+import 'package:mobile/features/ingredients/screens/ingredients_list_screen.dart';
 import 'package:mobile/features/profile/screens/profile_screen.dart';
 import 'package:mobile/services/auth_service.dart';
 
@@ -29,6 +32,9 @@ class MainApp extends StatelessWidget {
         '/auth/register': (context) => RegisterScreen(),
         '/home': (context) => HomeScreen(),
         '/profile': (context) => ProfileScreen(),
+        '/ingredients/list': (context) => IngredientsListScreen(),
+        '/ingredient/info': (context) => IngredientInfoScreen(),
+        '/ingredient/add': (context) => IngredientAddScreen(),
       },
     );
   }

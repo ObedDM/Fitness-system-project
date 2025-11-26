@@ -78,4 +78,61 @@ class AuthService {
       return false;
     }
   }
+
+  Future<List<dynamic>> getIngredientsList() async {
+    try {
+      final token = await storage.read(key: 'access_token');
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/ingredients'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return [];
+    } catch (e) {
+      print('IngredientList error: $e');
+      return [];
+    }
+  }
+
+    Future<Map<String, dynamic>?> getIngredientInfo(String ingredientId) async {
+    try {
+      final token = await storage.read(key: 'access_token');
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/ingredient/$ingredientId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return null;
+    } catch (e) {
+      print('IngredientInfo error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> addIngredient(Map<String, dynamic> ingredientData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/ingredient'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(ingredientData),
+      );
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Register error: $e');
+      return false;
+    }
+  }
 }

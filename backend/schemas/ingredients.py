@@ -2,7 +2,6 @@ from sqlmodel import SQLModel
 from typing import Optional
 
 class IngredientBase(SQLModel):
-    created_by: str
     name: str
     calories: int
     protein: int
@@ -11,7 +10,20 @@ class IngredientBase(SQLModel):
     glycemic_index: float
 
 class IngredientCreate(IngredientBase):
+    created_by: str # user.user_id
     micronutrients: Optional[dict[str, int]] = None # Name, Quantity
 
+class IngredientSummary(SQLModel):
+    ingredient_id: str
+    name: str
+    calories: int
+    created_by_username: str # user.username
+
+class MicroNutrientData(SQLModel):
+    quantity: int
+    unit: str
+    category: str
+
 class IngredientRead(IngredientBase):
-    pass
+    created_by_username: str # user.username
+    micronutrients: dict[str, MicroNutrientData] # micronutrient_name, micronutrient_data

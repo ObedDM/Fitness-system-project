@@ -86,7 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.black,
                     fontSize: 30
                   ),
-                )
+                ),
+
+                // Go to ingredients button
+                MaterialButton(
+                  onPressed: () => Navigator.pushNamed(context, '/ingredients/list'),
+                  child: Text('Ingredients'),
+                ),
+
               ],
             ),
         )
