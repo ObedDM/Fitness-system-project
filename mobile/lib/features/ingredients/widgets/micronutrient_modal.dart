@@ -1,6 +1,7 @@
-// Archivo: lib/features/ingredients/widgets/micronutrient_modal.dart
 import 'package:flutter/material.dart';
 import 'package:mobile/features/ingredients/widgets/micronutrient_card.dart';
+import 'package:mobile/services/auth_service.dart';
+
 
 class MicronutrientModal extends StatefulWidget {
   final List<Map<String, dynamic>> micronutrients;
@@ -8,11 +9,13 @@ class MicronutrientModal extends StatefulWidget {
   
   const MicronutrientModal({super.key, required this.micronutrients, required this.onDelete});
 
+
   @override
   State<MicronutrientModal> createState() => _MicronutrientModalState();
 }
 
-class _MicronutrientModalState extends State<MicronutrientModal> {
+
+class _MicronutrientModalState extends State<MicronutrientModal> { 
   
   void _deleteMicronutrient(int index) {
     setState(() {
@@ -21,12 +24,15 @@ class _MicronutrientModalState extends State<MicronutrientModal> {
     });
   }
 
-  void _showAddMicronutrientDialog() {
-    String? selectedMicronutrient;
-    final quantityController = TextEditingController();
-    
-    final micronutrients = ['Calcium', 'Iron', 'Magnesium', 'Potassium', 'Zinc', 'Vitamin A', 'Vitamin C', 'Vitamin D'];
 
+  void _showAddMicronutrientDialog() async {
+    String? selectedMicronutrient;
+    final micronutrientsList = await AuthService().getMicroNutrients();
+    Map<String, dynamic>? selectedMicronutrientData;
+    final quantityController = TextEditingController();
+
+    if (!mounted) return;
+  
     showDialog(
       context: context,
       builder: (context) {
@@ -37,14 +43,25 @@ class _MicronutrientModalState extends State<MicronutrientModal> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  DropdownButtonFormField<String>(
-                    initialValue: selectedMicronutrient,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    items: micronutrients.map((name) => DropdownMenuItem(value: name, child: Text(name))).toList(),
-                    onChanged: (value) => setDialogState(() => selectedMicronutrient = value),
+                  DropdownMenu<String>(
+                    initialSelection: selectedMicronutrient,
+                    width: 240,
+                    menuHeight: 150,
+                    label: const Text('Name'),
+                    dropdownMenuEntries: micronutrientsList
+                        .map<DropdownMenuEntry<String>>((micronutrient) {
+                      return DropdownMenuEntry<String>(
+                        value: micronutrient['name'],
+                        label: micronutrient['name'],
+                      );
+                    }).toList(),
+                    onSelected: (value) {
+                      setDialogState(() {
+                        selectedMicronutrient = value;
+                        selectedMicronutrientData = micronutrientsList
+                          .firstWhere((m) => m['name'] == value);
+                      });
+                    },
                   ),
 
                   const SizedBox(height: 16),
@@ -72,7 +89,10 @@ class _MicronutrientModalState extends State<MicronutrientModal> {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.green.shade300),
                         ),
-                        child: Text('mg', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          '${selectedMicronutrientData?['unit'] ?? ''}',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+                        ),
                       ),
                     ],
                   ),
@@ -81,20 +101,21 @@ class _MicronutrientModalState extends State<MicronutrientModal> {
             },
           ),
           actions: [
-            // Cancelar
             TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancelar')),
-
-            // Guardar
             ElevatedButton(
               onPressed: () {
+                final data = selectedMicronutrientData ??
+                  micronutrientsList.firstWhere((m) => m['name'] == selectedMicronutrient);
+
                 if (selectedMicronutrient != null && quantityController.text.isNotEmpty) {
+                  
                   setState(() {
                     widget.micronutrients.add({
-                      'name': selectedMicronutrient,
+                      'name': data['name'],
                       'quantity': double.tryParse(quantityController.text) ?? 0,
-                      'unit': 'mg',
-                      'category': 'Mineral',
+                      'unit': data['unit'],
                     });
+
                   });
                   Navigator.pop(context);
                 }
@@ -107,6 +128,7 @@ class _MicronutrientModalState extends State<MicronutrientModal> {
       },
     );
   }
+
 
 
   @override
