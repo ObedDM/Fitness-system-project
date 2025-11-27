@@ -29,7 +29,7 @@ class MicronutrientButton extends StatelessWidget {
         child: Row(
           children: [
 
-            Icon(Icons.spa, color: Colors.grey),
+            Icon(Icons.spa, color: Colors.black),
 
             const SizedBox(width: 12),
 
@@ -65,7 +65,7 @@ class MicronutrientButton extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Micronutrients",
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: TextStyle(color: Colors.black, fontSize: 16),
                     ),
                   ),
             ),

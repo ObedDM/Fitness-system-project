@@ -42,8 +42,8 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
     }
   ];
   
-    void _showMicronutrientsModal() {
-      showModalBottomSheet(
+    void _showMicronutrientsModal() async {
+      await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) => MicronutrientModal(
@@ -55,6 +55,8 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
           }
         ),
       );
+
+      setState(() {});
     }
 
     @override
