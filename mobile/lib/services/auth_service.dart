@@ -123,9 +123,14 @@ class AuthService {
 
   Future<bool> addIngredient(Map<String, dynamic> ingredientData) async {
     try {
+      final token = await storage.read(key: 'access_token');
+
       final response = await http.post(
         Uri.parse('$baseUrl/ingredient'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
         body: json.encode(ingredientData),
       );
 
@@ -134,5 +139,21 @@ class AuthService {
       print('Register error: $e');
       return false;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getMicroNutrients() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/micronutrients'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      }
+    } catch (e) {
+      print('Error getting micronutrients: $e');
+    }
+    return [];
   }
 }

@@ -19,28 +19,8 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
   final _fatController = TextEditingController();
   final _carbohydratesController = TextEditingController();
   final _glycemicIndexController = TextEditingController();
-  final _createdByController = TextEditingController();
 
-  final List<Map<String, dynamic>> _micronutrients = [
-    {
-      "name": "Potassium",
-      "quantity": 256,
-      "unit": "mg",
-      "category": "Mineral"
-    },
-    {
-      "name": "Iron",
-      "quantity": 1,
-      "unit": "mg",
-      "category": "Mineral"
-    },
-    {
-      "name": "Vitamin A",
-      "quantity": 1,
-      "unit": "mg",
-      "category": "Mineral"
-    }
-  ];
+  final List<Map<String, dynamic>> _micronutrients = [];
   
     void _showMicronutrientsModal() async {
       await showModalBottomSheet(
@@ -68,7 +48,6 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
       _fatController.dispose();
       _carbohydratesController.dispose();
       _glycemicIndexController.dispose();
-      _createdByController.dispose();
       super.dispose();
     }
 
@@ -89,9 +68,9 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                   controller: _scrollController,
                   child: Column(
                     children: [
-                      // Welcome text
+
                       Text(
-                        "create-account",
+                        "create ingredient",
                         style: TextStyle(fontSize: 24),
                       ),
 
@@ -194,27 +173,20 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                       ),
 
                       // Blank space
-                      const SizedBox(height: 16),
-
-                      TextField(
-                        controller: _createdByController,
-                        keyboardType: TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          hintText: "created by",
-                          prefixIcon: Icon(Icons.place),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Colors.black, width: 1.2)
-                          ),
-                        ),
-                      ),
-
-                      // Blank space
                       const SizedBox(height: 24),
 
                       // IngredientAddScreen Button
                       MaterialButton(
                         onPressed: () async {
+                          final micronutrientsPayload = <String, num>{};
+                          for (final m in _micronutrients) {
+                            final name = m['name'] as String;
+                            final quantity = m['quantity'] as num;
+
+                            micronutrientsPayload[name] = quantity;
+                          }
+
+
                           final ingredientData = <String, dynamic> {
                             'name': _nameController.text,
                             'calories': _caloriesController.text,
@@ -222,17 +194,10 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                             'fat': _fatController.text,
                             'carbohydrates': _carbohydratesController.text,
                             'glycemic_index': _glycemicIndexController.text,
+                            'micronutrients': micronutrientsPayload,
                           };
 
-                          /*if (_ageController.text.isNotEmpty) {
-                            userData['age'] = int.tryParse(_ageController.text);
-                          }
-                          if (_weightController.text.isNotEmpty) {
-                            userData['weight'] = double.tryParse(_weightController.text);
-                          }
-                          if (_heightController.text.isNotEmpty) {
-                            userData['height'] = double.tryParse(_heightController.text);
-                          }
+                          print(ingredientData);
 
                           final success = await AuthService().addIngredient(ingredientData);
 
@@ -245,7 +210,7 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Registration failed')),
                             );
-                          }*/
+                          }
                         },
                         color: const Color.fromARGB(255, 192, 255, 179),
                         padding: const EdgeInsets.symmetric(
@@ -260,7 +225,7 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                           )
                         ),
                         child: const Text(
-                          'Create Account',
+                          'Create Ingredient',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
