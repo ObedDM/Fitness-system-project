@@ -88,8 +88,6 @@ def retrieve_micronutrients(session: Session) -> List[MicroNutrient]:
 
        for micronutrient in results:
            micronutrient_list.append(micronutrient)
-           
-           print(micronutrient_list)
 
        return micronutrient_list
    
