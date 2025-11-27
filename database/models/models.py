@@ -39,7 +39,7 @@ class Ingredient_MicroNutrient(SQLModel, table=True):
 
 class MicroNutrient(SQLModel, table=True):
     name: str = Field(primary_key=True, index=True, unique=True, nullable=False)
-    category: str = Field(sa_column=Column(String(20), nullable=False))
+    category: str
     unit: str = Field(sa_column=Column(String(8), nullable=False))
 
     ingredient_links: List[Ingredient_MicroNutrient] = Relationship(
