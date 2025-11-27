@@ -4,8 +4,9 @@ import 'package:mobile/features/ingredients/widgets/micronutrient_card.dart';
 
 class MicronutrientModal extends StatefulWidget {
   final List<Map<String, dynamic>> micronutrients;
+  final Function(int) onDelete;
   
-  const MicronutrientModal({super.key, required this.micronutrients});
+  const MicronutrientModal({super.key, required this.micronutrients, required this.onDelete});
 
   @override
   State<MicronutrientModal> createState() => _MicronutrientModalState();
@@ -15,7 +16,8 @@ class _MicronutrientModalState extends State<MicronutrientModal> {
   
   void _deleteMicronutrient(int index) {
     setState(() {
-      widget.micronutrients.removeAt(index);
+      widget.onDelete(index);
+      setState(() {});
     });
   }
 

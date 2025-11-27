@@ -21,9 +21,7 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
   final _glycemicIndexController = TextEditingController();
   final _createdByController = TextEditingController();
 
-  @override
-  Widget build(BuildContext context) {
-    List<Map<String, dynamic>> _micronutrients = [
+  final List<Map<String, dynamic>> _micronutrients = [
     {
       "name": "Potassium",
       "quantity": 256,
@@ -48,7 +46,14 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => MicronutrientModal(micronutrients: _micronutrients),
+        builder: (context) => MicronutrientModal(
+          micronutrients: _micronutrients,
+          onDelete: (index) {
+            setState(() {
+              _micronutrients.removeAt(index);
+            });
+          }
+        ),
       );
     }
 
@@ -65,6 +70,8 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
       super.dispose();
     }
 
+  @override
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
