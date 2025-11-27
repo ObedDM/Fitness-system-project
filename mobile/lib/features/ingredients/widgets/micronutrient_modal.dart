@@ -1,28 +1,68 @@
 // Archivo: lib/features/ingredients/widgets/micronutrient_modal.dart
 import 'package:flutter/material.dart';
+import 'package:mobile/features/ingredients/widgets/micronutrient_card.dart';
 
-class MicronutrientModal extends StatelessWidget {
-  const MicronutrientModal({super.key});
+class MicronutrientModal extends StatefulWidget {
+  final List<Map<String, dynamic>> micronutrients;
+  
+  const MicronutrientModal({super.key, required this.micronutrients});
+
+  @override
+  State<MicronutrientModal> createState() => _MicronutrientModalState();
+}
+
+class _MicronutrientModalState extends State<MicronutrientModal> {
+  
+  void _deleteMicronutrient(int index) {
+    setState(() {
+      widget.micronutrients.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400, // Una altura fija para probar
-      width: double.infinity,
-      color: Colors.white, // Fondo blanco
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.construction, size: 50, color: Colors.orange),
-            SizedBox(height: 20),
-            Text(
-              "¡Aquí va el Modal!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      height: MediaQuery.of(context).size.height * 0.7,
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Micronutrientes', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          
+          Divider(),
+          
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.micronutrients.length,
+              itemBuilder: (context, index) {
+                return MicroNutrientCard(
+                  micronutrient: widget.micronutrients[index],
+                  onDelete: () => _deleteMicronutrient(index),
+                );
+              },
             ),
-            Text("Si ves esto, la conexión funciona."),
-          ],
-        ),
+          ),
+          
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {},
+              child: Text('Agregar Micronutriente'),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -21,29 +21,6 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
   final _glycemicIndexController = TextEditingController();
   final _createdByController = TextEditingController();
 
-  void _showMicronutrientsModal() {
-  showModalBottomSheet(
-    context: context,
-    builder: (context) {
-      // Aquí llamamos a nuestro widget placeholder
-      return const MicronutrientModal();
-    },
-  );
-}
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _nameController.dispose();
-    _caloriesController.dispose();
-    _proteinController.dispose();
-    _fatController.dispose();
-    _carbohydratesController.dispose();
-    _glycemicIndexController.dispose();
-    _createdByController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> _micronutrients = [
@@ -66,6 +43,27 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
       "category": "Mineral"
     }
   ];
+  
+    void _showMicronutrientsModal() {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => MicronutrientModal(micronutrients: _micronutrients),
+      );
+    }
+
+    @override
+    void dispose() {
+      _scrollController.dispose();
+      _nameController.dispose();
+      _caloriesController.dispose();
+      _proteinController.dispose();
+      _fatController.dispose();
+      _carbohydratesController.dispose();
+      _glycemicIndexController.dispose();
+      _createdByController.dispose();
+      super.dispose();
+    }
 
     final size = MediaQuery.of(context).size;
 
