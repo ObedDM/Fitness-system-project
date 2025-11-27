@@ -7,10 +7,11 @@ class IngredientBase(SQLModel):
     protein: int
     fat: int
     carbohydrates: int
+    water: Optional[float] = None
     glycemic_index: float
 
 class IngredientCreate(IngredientBase):
-    micronutrients: Optional[dict[str, int]] = None # Name, Quantity
+    micronutrients: Optional[dict[str, float]] = None # Name, Quantity
 
 class IngredientSummary(SQLModel):
     ingredient_id: str

@@ -166,6 +166,7 @@ def retrieve_single_ingredient(ingredient_id: str, session: Session) -> Ingredie
             protein=ingredient_obj.protein,
             fat=ingredient_obj.fat,
             carbohydrates=ingredient_obj.carbohydrates,
+            water=ingredient_obj.water or None,
             glycemic_index=ingredient_obj.glycemic_index,
             micronutrients=micronutrients_dict or None,
         )

@@ -32,7 +32,7 @@ class Role(SQLModel, table=True):
 class Ingredient_MicroNutrient(SQLModel, table=True):
     ingredient_id: str = Field(foreign_key="ingredient.ingredient_id", primary_key=True)
     nutrient_name: str = Field(foreign_key="micronutrient.name", primary_key=True)
-    quantity: int
+    quantity: float
 
     ingredient: "Ingredient" = Relationship(back_populates="micronutrient_links")
     micronutrient: "MicroNutrient" = Relationship(back_populates="ingredient_links")
