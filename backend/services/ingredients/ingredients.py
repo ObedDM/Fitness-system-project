@@ -1,18 +1,20 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from typing import List
+from typing import List, Dict
 
 from database.models.models import Ingredient, Ingredient_MicroNutrient, MicroNutrient, User
 from backend.schemas.ingredients import IngredientCreate, IngredientSummary, IngredientRead, MicroNutrientData
 from backend.schemas.micronutrient import MicronutrientCreate
 from backend.utils.db_utils import is_existing
 
-def add_ingredient(data: IngredientCreate, session: Session) -> Ingredient:
-
+def add_ingredient(data: IngredientCreate, user_id: str, session: Session) -> Ingredient:
+  
     try:
-
-        new_ingredient = Ingredient(**data.model_dump(exclude={"micronutrients"}))
+        new_ingredient = Ingredient(
+            **data.model_dump(exclude={"micronutrients"}),
+            created_by=user_id
+        )
 
         session.add(new_ingredient)
         session.flush()
@@ -129,34 +131,33 @@ def retrieve_ingredients(session: Session) -> List[IngredientSummary]:
 def retrieve_single_ingredient(ingredient_id: str, session: Session) -> IngredientRead:
 
     try:
-        results = session.exec(
-            select(Ingredient, User.username, MicroNutrient, Ingredient_MicroNutrient.quantity)
+        row = session.exec(
+            select(Ingredient, User.username)
             .join(User)
-            .join(Ingredient_MicroNutrient)
-            .join(MicroNutrient)
             .where(Ingredient.ingredient_id == ingredient_id)
-        ).all()
+        ).first()
 
-        if not results:
+        if not row:
             raise HTTPException(404, "Ingredient not found")
         
-        first_row = results[0]
-        ingredient_obj: Ingredient = first_row[0]
-        username: str = first_row[1]
-        
-        micronutrients_dict = {}
-        
-        for row in results:
-            micronutrient_obj: MicroNutrient = row[2]
-            micronutrient_quantity: int = row[3]
+        ingredient_obj: Ingredient = row[0]
+        username: str = row[1]
 
+        micro_rows = session.exec(
+            select(MicroNutrient, Ingredient_MicroNutrient.quantity)
+            .join(Ingredient_MicroNutrient)
+            .where(Ingredient_MicroNutrient.ingredient_id == ingredient_id)
+        ).all()
+        
+        micronutrients_dict: Dict[str, MicroNutrientData] = {}
+        
+        for micro_obj, quantity in micro_rows:
             micronutrient_data = MicroNutrientData(
-                quantity=micronutrient_quantity,
-                unit=micronutrient_obj.unit,
-                category=micronutrient_obj.category
+                quantity=quantity,
+                unit=micro_obj.unit,
+                category=micro_obj.category,
             )
-            
-            micronutrients_dict[micronutrient_obj.name] = micronutrient_data
+            micronutrients_dict[micro_obj.name] = micronutrient_data
 
         ingredient_read = IngredientRead(
             created_by_username=username,
@@ -166,10 +167,13 @@ def retrieve_single_ingredient(ingredient_id: str, session: Session) -> Ingredie
             fat=ingredient_obj.fat,
             carbohydrates=ingredient_obj.carbohydrates,
             glycemic_index=ingredient_obj.glycemic_index,
-            micronutrients=micronutrients_dict
+            micronutrients=micronutrients_dict or None,
         )
 
         return ingredient_read
 
+    except HTTPException:
+        raise
+    
     except Exception as e:
         raise HTTPException(500, f"Unexpected error: {str(e)}")

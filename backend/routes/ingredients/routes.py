@@ -6,12 +6,13 @@ from backend.routes.router import router
 from backend.schemas.ingredients import IngredientCreate, IngredientSummary, IngredientRead
 from backend.schemas.micronutrient import MicronutrientCreate, MicronutrientsRead
 from backend.services.ingredients.ingredients import add_ingredient, add_micronutrient, retrieve_micronutrients, retrieve_ingredients, retrieve_single_ingredient
+from backend.utils.dependencies import get_user_id
 
 
 @router.post('/ingredient', status_code=201)
-def add_ingredient_handler(data: IngredientCreate, session: Session = Depends(get_session)):
+def add_ingredient_handler(data: IngredientCreate, user_id: str = Depends(get_user_id), session: Session = Depends(get_session)):
     
-    ingredient = add_ingredient(data, session)
+    ingredient = add_ingredient(data, user_id, session)
     return {"message": f"ingredient {ingredient.name} created successfully. Id: {ingredient.ingredient_id}"}
 
 

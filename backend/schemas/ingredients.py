@@ -10,7 +10,6 @@ class IngredientBase(SQLModel):
     glycemic_index: float
 
 class IngredientCreate(IngredientBase):
-    created_by: str # user.user_id
     micronutrients: Optional[dict[str, int]] = None # Name, Quantity
 
 class IngredientSummary(SQLModel):
@@ -26,4 +25,4 @@ class MicroNutrientData(SQLModel):
 
 class IngredientRead(IngredientBase):
     created_by_username: str # user.username
-    micronutrients: dict[str, MicroNutrientData] # micronutrient_name, micronutrient_data
+    micronutrients: Optional[dict[str, MicroNutrientData]] = None # micronutrient_name, micronutrient_data  
