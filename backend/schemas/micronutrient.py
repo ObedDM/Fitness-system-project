@@ -8,5 +8,5 @@ class MicronutrientBase(SQLModel):
 class MicronutrientCreate(MicronutrientBase):
     pass
 
-class MicronutrientRead(MicronutrientBase):
+class MicronutrientsRead(MicronutrientBase):
     pass

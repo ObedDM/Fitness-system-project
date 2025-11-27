@@ -76,6 +76,27 @@ def add_micronutrient(data: MicronutrientCreate, session: Session) -> MicroNutri
         session.rollback()
         raise HTTPException(500, f"Unexpected error: {str(e)}")
     
+    
+def retrieve_micronutrients(session: Session) -> List[MicroNutrient]:
+
+   try:
+       results = session.exec(
+           select(MicroNutrient)
+       ).all()
+
+       micronutrient_list = []
+
+       for micronutrient in results:
+           micronutrient_list.append(micronutrient)
+           
+           print(micronutrient_list)
+
+       return micronutrient_list
+   
+   except Exception as e:
+       raise HTTPException(500, f"Unexpected error: {str(e)}")
+    
+    
 def retrieve_ingredients(session: Session) -> List[IngredientSummary]:
 
     try:
