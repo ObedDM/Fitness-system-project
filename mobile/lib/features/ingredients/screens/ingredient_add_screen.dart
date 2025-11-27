@@ -18,6 +18,7 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
   final _proteinController = TextEditingController();
   final _fatController = TextEditingController();
   final _carbohydratesController = TextEditingController();
+  final _waterController = TextEditingController();
   final _glycemicIndexController = TextEditingController();
 
   final List<Map<String, dynamic>> _micronutrients = [];
@@ -47,6 +48,7 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
       _proteinController.dispose();
       _fatController.dispose();
       _carbohydratesController.dispose();
+      _waterController.dispose();
       _glycemicIndexController.dispose();
       super.dispose();
     }
@@ -137,7 +139,6 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
 
                       TextField(
                         controller: _carbohydratesController,
-                        obscureText: true,
                         decoration: InputDecoration(
                           hintText: "carbohydrates",
                           prefixIcon: Icon(Icons.place),
@@ -154,6 +155,22 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                       MicronutrientButton(
                         micronutrients: _micronutrients,
                         onTap: _showMicronutrientsModal,
+                      ),
+
+                      // Blank space
+                      const SizedBox(height: 16),
+
+                      TextField(
+                        controller: _waterController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: "water",
+                          prefixIcon: Icon(Icons.water_drop_outlined),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Colors.black, width: 1.2)
+                          ),
+                        ),
                       ),
 
                       // Blank space
@@ -193,6 +210,7 @@ class _IngredientAddScreenState extends State<IngredientAddScreen> {
                             'protein': _proteinController.text,
                             'fat': _fatController.text,
                             'carbohydrates': _carbohydratesController.text,
+                            'water': _waterController.text,
                             'glycemic_index': _glycemicIndexController.text,
                             'micronutrients': micronutrientsPayload,
                           };
