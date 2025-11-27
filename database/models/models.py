@@ -53,6 +53,7 @@ class Ingredient(SQLModel, table=True):
     calories: int = Field(sa_column=Column(Numeric(4), nullable=False))
     protein: int = Field(sa_column=Column(Numeric(3), nullable=False))
     fat: int = Field(sa_column=Column(Numeric(3), nullable=False))
+    water: float = Field(sa_column=Column(Numeric(4,1)))
     carbohydrates: int = Field(sa_column=Column(Numeric(3), nullable=False))
     glycemic_index: float = Field(sa_column=Column(Numeric(4,1), nullable=False))
 
