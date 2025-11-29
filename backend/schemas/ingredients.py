@@ -20,7 +20,7 @@ class IngredientSummary(SQLModel):
     created_by_username: str # user.username
 
 class MicroNutrientData(SQLModel):
-    quantity: int
+    quantity: float
     unit: str
     category: str
 
