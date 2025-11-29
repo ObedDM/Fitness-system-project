@@ -1,7 +1,8 @@
 import uuid6
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
-from sqlalchemy import String, Column, Numeric, CheckConstraint, UniqueConstraint, CHAR
+from sqlalchemy import String, Column, Numeric, CheckConstraint, UniqueConstraint, CHAR, Date, ForeignKey
+from datetime import date
 
 class User_Role(SQLModel, table=True):
     user_id: str = Field(foreign_key="user.user_id", primary_key=True, nullable=False)
@@ -46,6 +47,15 @@ class MicroNutrient(SQLModel, table=True):
         back_populates="micronutrient"
     )
 
+class Ingredient_Dish(SQLModel, table=True):
+    dish_id: str = Field(sa_column=Column(String, ForeignKey("dish.dish_id", ondelete="CASCADE"), primary_key=True, nullable=False))
+    ingredient_id: str = Field(sa_column=Column(String, ForeignKey("ingredient.ingredient_id", ondelete="CASCADE"), primary_key=True, nullable=False))
+    amount: float = Field(sa_column=Column(Numeric(5, 2), nullable=False))
+    unit: str = Field(sa_column=Column(String(8), nullable=False))
+
+    dish: "Dish" = Relationship(back_populates="ingredient_links")
+    ingredient: "Ingredient" = Relationship(back_populates="dish_links")
+
 class Ingredient(SQLModel, table=True):
     ingredient_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
     created_by: str = Field(foreign_key="user.user_id")
@@ -62,6 +72,28 @@ class Ingredient(SQLModel, table=True):
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
+    dish_links: List[Ingredient_Dish] = Relationship(
+        back_populates="ingredient"
+    )
+
     __table_args__ = (
         UniqueConstraint("name", "created_by", name="UNIQUE_NAME_CREATEDBY"),
     )
+
+class Dish(SQLModel, table=True):
+    dish_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
+    created_by: str = Field(foreign_key="user.user_id")
+    name: str = Field(nullable=False)
+    description: str = Field(nullable=False)
+    servings: float = Field(sa_column=Column(Numeric(4,2)))
+    category: str = Field(nullable=False)
+    created_at: date = Field(default_factory=date.today, sa_column=Column(Date(), nullable=False))
+
+    __table_args__ = (
+        UniqueConstraint("name", "created_by", name="UNIQUE_DISH_NAME_CREATEDBY"),
+    )
+
+    ingredient_links: List[Ingredient_Dish] = Relationship(
+        back_populates="dish"
+    )
+    
