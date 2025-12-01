@@ -84,7 +84,7 @@ class Dish(SQLModel, table=True):
     dish_id: str = Field(default_factory=lambda: str(uuid6.uuid7()), primary_key=True, index=True, unique=True)
     created_by: str = Field(foreign_key="user.user_id")
     name: str = Field(nullable=False)
-    description: str = Field(nullable=False)
+    description: str
     servings: float = Field(sa_column=Column(Numeric(4,2)))
     category: str = Field(nullable=False)
     created_at: date = Field(default_factory=date.today, sa_column=Column(Date(), nullable=False))
