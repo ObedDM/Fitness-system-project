@@ -2,3 +2,6 @@
 .env*
 *.pyc
 *.md
+
+backend/assets/
+mobile/assets
