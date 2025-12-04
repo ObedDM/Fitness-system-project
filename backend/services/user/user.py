@@ -66,7 +66,7 @@ def get_users(session: Session) -> UserRead:
 def get_profile(user_id: str, session: Session) -> UserRead:
     result = session.exec(
         select(User, User_Role.role)
-        .join(User_Role)
+        .outerjoin(User_Role)
         .where(User.user_id == user_id)
     ).first()
 

@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AuthService {
   static const String baseUrl = 'http://localhost:8000';
@@ -156,4 +157,77 @@ class AuthService {
     }
     return [];
   }
+
+  Future<List<dynamic>> getDishesList({bool onlyMine = false}) async {
+    final path = onlyMine ? '/dishes/me' : '/dishes';
+
+    try {
+      final token = await storage.read(key: 'access_token');
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl$path'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return [];
+    } catch (e) {
+      print('DishesList error: $e');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>?> getDishInfo(String dishId) async {
+    try {
+      final token = await storage.read(key: 'access_token');
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/dish/$dishId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return null;
+    } catch (e) {
+      print('IngredientInfo error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> addDish(Map<String, dynamic> dishData, XFile? image) async {
+    try {
+      final token = await storage.read(key: 'access_token');
+      
+      final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/dish'))
+      ..headers['Authorization'] = 'Bearer $token'
+      ..fields['data'] = json.encode(dishData);
+  
+      if (image != null) {
+      final bytes = await image.readAsBytes();
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          bytes,
+          filename: image.name,
+        ),
+      );
+    }
+
+      final response = await request.send();
+
+      return response.statusCode == 201;
+    } catch (e) {
+      print('Add dish error: $e');
+      return false;
+    }
+  }
+
 }

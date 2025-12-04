@@ -5,7 +5,7 @@ from pydantic import EmailStr, Field
 class UserBase(SQLModel):
     username: str
     email: EmailStr = Field(..., max_length=254)
-    role: str
+    role: Optional[str] = None 
 
 class UserCreate(UserBase):
     name: str

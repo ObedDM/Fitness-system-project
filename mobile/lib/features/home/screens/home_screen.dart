@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/features/home/widgets/home_dishes_card.dart';
+import 'package:mobile/features/home/widgets/home_ingredients_card.dart';
 import '../../../services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,75 +31,84 @@ class _HomeScreenState extends State<HomeScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Home'),
+        actions: [
+          // Go to profile button
+          IconButton(
+            onPressed: () => Navigator.pushNamed(context, '/profile'),
+            icon: const Icon(Icons.person),
+            ),
+        ],
+      ),
+
+      body: Padding(
+        padding: EdgeInsets.all(size.width * 0.05),
         child: 
-        Padding(
-          padding: EdgeInsets.all(size.width * 0.05),
-          child: 
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
 
-                // Go to profile button
-                MaterialButton(
-                  onPressed: () => Navigator.pushNamed(context, '/profile'),
-                  child: Text('View Profile'),
-                ),
+              const Text(
+              'What do you want to explore?',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
 
-                // Go back to login screen button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    MaterialButton(
-                      onPressed: () async {
-                        await _authService.logout();
-                        Navigator.pushNamed(context, '/auth/login');
-                      },
-                      color: const Color.fromARGB(255, 76, 194, 102),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 16,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: Colors.black,
-                          width: 0.3
-                        )
-                      ),
-                      child: const Text(
-                        'Log out',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    )
-                  ]
-                ),
+            const SizedBox(height: 24),
 
-                // Blanck space
-                const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
-                // Placeholder Text
-                Text(
-                  'Welcome to HomeScreen',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 30
+            const HomeIngredientsCard(),
+
+            const SizedBox(height: 16),
+
+            const HomeDishesCard(),
+
+            const Spacer(),
+
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-
-                // Go to ingredients button
-                MaterialButton(
-                  onPressed: () => Navigator.pushNamed(context, '/ingredients/list'),
-                  child: Text('Ingredients'),
+                onPressed: () async {
+                  await _authService.logout();
+                  if (mounted) {
+                    Navigator.pushReplacementNamed(context, '/auth/login');
+                  }
+                },
+                child: const Text(
+                  'Log out',
+                  style: TextStyle(color: Colors.red),
                 ),
-
-              ],
+              ),
             ),
-        )
-      ),
+
+            const SizedBox(height: 20),
+
+            ],
+          ),
+      )
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+

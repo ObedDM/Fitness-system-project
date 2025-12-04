@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/features/profile/widgets/profile_info_card.dart';
 import '../../../services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -40,19 +41,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Profile Data:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 20),
-                      ..._profileData!.entries.map((entry) => 
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8),
-                          child: Text('${entry.key}: ${entry.value}', style: TextStyle(fontSize: 16)),
-                        )
-                      ).toList(),
-                      SizedBox(height: 30),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text('Back'),
+                      const SizedBox(height: 20),
+
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: const Color.fromARGB(255, 235, 255, 229),
+                        child: const Icon(
+                          Icons.person,
+                          size: 60,
+                          color: Colors.green,
+                        ),
                       ),
+
+                      const SizedBox(height: 16),
+
+                      // Username
+                      Text(
+                        _profileData!['username'] ?? '-',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Profile Info Cards
+                      ProfileInfoCard(field: 'Name', value: '${_profileData!['name'] ?? '-'} ${_profileData!['surname'] ?? '-'}'),
+                      const SizedBox(height: 12),
+
+                      ProfileInfoCard(field: 'Email', value: _profileData!['email'] ?? '-'),
+                      const SizedBox(height: 12),
+                      
+                      ProfileInfoCard(field: 'Age', value: '${_profileData!['age'] ?? '-'} years'),
+                      const SizedBox(height: 12),
+
+                      ProfileInfoCard(field: 'Weight', value: '${_profileData!['weight'] ?? '-'} kg'),
+                      const SizedBox(height: 12),
+                      
+                      ProfileInfoCard(field: 'Height', value: '${_profileData!['height'] ?? '-'} m'),
                     ],
                   ),
                 ),

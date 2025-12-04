@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/login_Screen.dart';
 import 'package:mobile/features/auth/screens/register_screen.dart';
+import 'package:mobile/features/dish/screens/dish_add_screen.dart';
+import 'package:mobile/features/dish/screens/dish_info_screen.dart';
+import 'package:mobile/features/dish/screens/dish_list_screen.dart';
 import 'package:mobile/features/home/screens/home_screen.dart';
 import 'package:mobile/features/ingredients/screens/ingredient_add_screen.dart';
 import 'package:mobile/features/ingredients/screens/ingredient_info_screen.dart';
@@ -35,6 +38,9 @@ class MainApp extends StatelessWidget {
         '/ingredients/list': (context) => IngredientsListScreen(),
         '/ingredient/info': (context) => IngredientInfoScreen(),
         '/ingredient/add': (context) => IngredientAddScreen(),
+        '/dishes/list': (context) => DishesListScreen(),
+        '/dish/info': (context) => DishInfoScreen(),
+        '/dish/add': (context) => DishAddScreen(),
       },
     );
   }
