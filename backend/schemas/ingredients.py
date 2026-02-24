@@ -3,12 +3,17 @@ from typing import Optional
 
 class IngredientBase(SQLModel):
     name: str
-    calories: int
-    protein: int
-    fat: int
-    carbohydrates: int
+
+    calories: Optional[float] = None
+    protein: Optional[float] = None
+    fat: Optional[float] = None
+    carbohydrates: Optional[float] = None
     water: Optional[float] = None
-    glycemic_index: float
+
+    usda_id: Optional[int] = None
+    brand: Optional[str] = None
+
+    glycemic_index: Optional[float] = None
 
 class IngredientCreate(IngredientBase):
     micronutrients: Optional[dict[str, float]] = None # Name, Quantity
@@ -16,13 +21,16 @@ class IngredientCreate(IngredientBase):
 class IngredientSummary(SQLModel):
     ingredient_id: str
     name: str
-    calories: int
+    calories: Optional[float] = None
     created_by_username: str # user.username
+
+    usda_id: Optional[int] = None 
+    brand: Optional[str] = None
 
 class MicroNutrientData(SQLModel):
     quantity: float
     unit: str
-    category: str
+    category: Optional[str] = None
 
 class IngredientRead(IngredientBase):
     created_by_username: str # user.username

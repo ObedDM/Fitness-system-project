@@ -44,5 +44,3 @@ async def retrieve_single_dish_handler(dish_id: str, session: Session = Depends(
 @router.get('/dish/{dish_id}/image')
 async def get_dish_image(dish_id: str):
     return get_image(filename=dish_id)
-    
-5

@@ -4,4 +4,6 @@
 *.md
 
 backend/assets/
+backend/data
+backend/utils/FoodData API/nutrient.csv
 mobile/assets

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/features/auth/screens/login_Screen.dart';
+import 'package:mobile/features/auth/screens/login_screen.dart';
 import 'package:mobile/features/auth/screens/register_screen.dart';
 import 'package:mobile/features/dish/screens/dish_add_screen.dart';
 import 'package:mobile/features/dish/screens/dish_info_screen.dart';

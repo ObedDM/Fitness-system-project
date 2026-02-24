@@ -1,4 +1,4 @@
-#run with: uvicorn backend.app:app --reload --port 8000
+#run with: uvicorn backend.app:app --host 0.0.0.0 --reload --port 8000
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +9,7 @@ import backend.routes.auth.routes
 import backend.routes.user.routes
 import backend.routes.ingredients.routes
 import backend.routes.dish.routes
+import backend.routes.consumption.routes
 
 load_dotenv()
 

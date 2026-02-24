@@ -11,7 +11,7 @@ from backend.utils.dependencies import get_user_id
 async def register_handler(data: UserCreate, session: Session = Depends(get_session)):
     return {"message": f"{register_user(data, session)}"}
 
-@router.get('/user/get_all', response_model=UserRead, status_code=200)
+@router.get('/user/get_all', response_model=list[UserRead], status_code=200)
 async def get_users_handler(session: Session = Depends(get_session)):
     return get_users(session)
 

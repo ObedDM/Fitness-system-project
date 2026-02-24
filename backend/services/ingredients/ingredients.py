@@ -19,13 +19,19 @@ def add_ingredient(data: IngredientCreate, user_id: str, session: Session) -> In
         session.add(new_ingredient)
         session.flush()
 
+        all_nutrients = session.exec(
+            select(MicroNutrient).where(MicroNutrient.name.in_(data.micronutrients.keys()))
+        ).all()
+
+        nutrient_map = {n.name: n for n in all_nutrients}
         
         for name, quantity in (data.micronutrients or {}).items():
-
             if quantity < 0:
                 raise HTTPException(422, "Quantity cannot have negative values")
             
-            if not is_existing(session, MicroNutrient, "name", name):
+            micronutrient_def = nutrient_map.get(name)
+            
+            if not micronutrient_def:
                 raise HTTPException(400, f"Micronutrient {name} does not exist")
             
             micronutrient = Ingredient_MicroNutrient(
@@ -37,7 +43,6 @@ def add_ingredient(data: IngredientCreate, user_id: str, session: Session) -> In
             session.add(micronutrient)
         
         session.commit()
-
         return new_ingredient
     
     except IntegrityError as e:
@@ -101,7 +106,7 @@ def retrieve_ingredients(session: Session) -> List[IngredientSummary]:
 
     try:
         results = session.exec(
-            select(Ingredient.ingredient_id, Ingredient.name, Ingredient.calories, User.username)
+            select(Ingredient.ingredient_id, Ingredient.name, Ingredient.calories, User.username, Ingredient.usda_id, Ingredient.brand)
             .join(User)
         ).all()
 
@@ -110,19 +115,16 @@ def retrieve_ingredients(session: Session) -> List[IngredientSummary]:
         
         ingredients_list = []
 
-        for row in results:
-            ingredient_id, ingredient_name, ingredient_calories, username = row
-
-            ingredient_summary = IngredientSummary(
-                ingredient_id=ingredient_id,
-                name=ingredient_name,
-                calories=ingredient_calories,
-                created_by_username=username
-            )
-        
-            ingredients_list.append(ingredient_summary)
-
-        return ingredients_list
+        return [
+            IngredientSummary(
+                ingredient_id=row[0],
+                name=row[1],
+                calories=row[2],
+                created_by_username=row[3],
+                usda_id=row[4],
+                brand=row[5]
+            ) for row in results
+        ]
 
     except Exception as e:
         raise HTTPException(500, f"Unexpected error: {str(e)}")
@@ -159,19 +161,19 @@ def retrieve_single_ingredient(ingredient_id: str, session: Session) -> Ingredie
             )
             micronutrients_dict[micro_obj.name] = micronutrient_data
 
-        ingredient_read = IngredientRead(
+        return IngredientRead(
             created_by_username=username,
             name=ingredient_obj.name,
+            usda_id=ingredient_obj.usda_id,
+            brand=ingredient_obj.brand,
             calories=ingredient_obj.calories,
             protein=ingredient_obj.protein,
             fat=ingredient_obj.fat,
             carbohydrates=ingredient_obj.carbohydrates,
-            water=ingredient_obj.water or None,
+            water=ingredient_obj.water,
             glycemic_index=ingredient_obj.glycemic_index,
             micronutrients=micronutrients_dict or None,
         )
-
-        return ingredient_read
 
     except HTTPException:
         raise

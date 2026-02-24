@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from datetime import date
 
 class DishIngredients(SQLModel):
@@ -24,6 +24,12 @@ class DishRead(SQLModel):
     created_at: date
     created_by_username: str
     ingredients: Optional[List[DishIngredients]] = None
+    
+    calories: Optional[float] = 0.0
+    protein: Optional[float] = 0.0
+    fat: Optional[float] = 0.0
+    carbohydrates: Optional[float] = 0.0
+    micronutrients: Optional[Dict[str, Any]] = None
     
 class DishSummary(SQLModel):
     dish_id: str

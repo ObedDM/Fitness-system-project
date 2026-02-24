@@ -1,4 +1,5 @@
-from fastapi import Depends
+from typing import Dict, Any
+from fastapi import Depends, Body
 from sqlmodel import Session
 
 from database.connection import get_session
@@ -6,6 +7,7 @@ from backend.routes.router import router
 from backend.schemas.ingredients import IngredientCreate, IngredientSummary, IngredientRead
 from backend.schemas.micronutrient import MicronutrientCreate, MicronutrientsRead
 from backend.services.ingredients.ingredients import add_ingredient, add_micronutrient, retrieve_micronutrients, retrieve_ingredients, retrieve_single_ingredient
+from backend.services.ingredients.usda_services import ingest_usda_food, search_usda
 from backend.utils.dependencies import get_user_id
 
 
@@ -36,3 +38,15 @@ def retrieve_ingredients_handler(session: Session = Depends(get_session)):
 @router.get('/ingredient/{ingredient_id}', response_model=IngredientRead, status_code=200)
 def retrieve_single_ingredient_handler(ingredient_id: str, session: Session = Depends(get_session)):
     return retrieve_single_ingredient(ingredient_id, session)
+
+
+@router.get("/usda-search")
+async def search_usda_handler(query: str):
+    return await search_usda(query)
+
+
+@router.post("/sync-usda", response_model=IngredientRead)
+def sync_usda_food(usda_data: Dict[str, Any] = Body(...), session: Session = Depends(get_session), user_id: str = Depends(get_user_id)):
+   
+    new_ingredient = ingest_usda_food(usda_data, user_id, session)
+    return retrieve_single_ingredient(new_ingredient.ingredient_id, session)

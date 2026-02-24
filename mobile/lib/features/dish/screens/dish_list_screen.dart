@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:mobile/features/dish/widgets/dish_card.dart';
 import '../../../services/auth_service.dart';
 
@@ -23,11 +24,7 @@ class _DishesListScreenState extends State<DishesListScreen> {
 
   Future<void> _loadDishesListScreen() async {
     setState(() => _isLoading = true);
-
-    final data = _myDishes
-        ? await _authService.getDishesList(onlyMine: true)  // GET /dishes/me
-        : await _authService.getDishesList(onlyMine: false);   // GET /dishes
-
+    final data = await _authService.getDishesList(onlyMine: _myDishes);
     setState(() {
       _dishesListData = data;
       _isLoading = false;
@@ -40,16 +37,18 @@ class _DishesListScreenState extends State<DishesListScreen> {
       appBar: AppBar(
         title: const Text('Dishes'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadDishesListScreen,
+          ),
           TextButton(
             onPressed: () {
-              setState(() {
-                _myDishes = !_myDishes;
-              });
+              setState(() => _myDishes = !_myDishes);
               _loadDishesListScreen();
             },
             child: Text(
               _myDishes ? 'All dishes' : 'My dishes',
-              style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+              style: const TextStyle(color: Colors.black),
             ),
           ),
         ],
@@ -63,20 +62,30 @@ class _DishesListScreenState extends State<DishesListScreen> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: _dishesListData!.length,
-                          itemBuilder: (context, index) {
-                            final dish = _dishesListData![index];
-
-                            return DishCard(
-                              dish: dish,
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                '/dish/info',
-                                arguments: dish['dish_id'],
-                              ),
-                            );
-                          },
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context).copyWith(
+                            dragDevices: {
+                              PointerDeviceKind.touch,
+                              PointerDeviceKind.mouse,
+                              PointerDeviceKind.stylus,
+                              PointerDeviceKind.trackpad,
+                            },
+                          ),
+                          child: ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: _dishesListData!.length,
+                            itemBuilder: (context, index) {
+                              final dish = _dishesListData![index];
+                              return DishCard(
+                                dish: dish,
+                                onTap: () => Navigator.pushNamed(
+                                  context,
+                                  '/dish/info',
+                                  arguments: dish['dish_id'],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -84,11 +93,9 @@ class _DishesListScreenState extends State<DishesListScreen> {
                         height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 165, 255, 165),
+                            backgroundColor: const Color.fromARGB(255, 165, 255, 165),
                           ),
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/dish/add'),
+                          onPressed: () => Navigator.pushNamed(context, '/dish/add'),
                           child: const Text('Add dish'),
                         ),
                       ),

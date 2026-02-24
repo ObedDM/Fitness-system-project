@@ -91,6 +91,7 @@ def retrieve_dishes(session: Session, user_id: str | None = None) -> List[DishSu
 
 def retrieve_single_dish(dish_id: str, session: Session) -> DishRead:
     try:
+        # 1. Fetch the dish and join with User to get the creator's username
         row = session.exec(
             select(Dish, User.username)
             .join(User, Dish.created_by == User.user_id)
@@ -102,34 +103,76 @@ def retrieve_single_dish(dish_id: str, session: Session) -> DishRead:
 
         dish_obj, username = row
 
+        # 2. Fetch all ingredients associated with this dish
         ingredient_rows = session.exec(
             select(Ingredient, Ingredient_Dish.amount, Ingredient_Dish.unit)
             .join(Ingredient_Dish, Ingredient.ingredient_id == Ingredient_Dish.ingredient_id)
             .where(Ingredient_Dish.dish_id == dish_id)
         ).all()
 
-        ingredients_list: List[DishIngredients] = [
-            DishIngredients(
-                ingredient_id=ingredient_obj.ingredient_id,
+        total_calories = 0.0
+        total_protein = 0.0
+        total_fat = 0.0
+        total_carbs = 0.0
+        micronutrients_map = {}
+
+        ingredients_list = []
+        
+        for ing_obj, amount, unit in ingredient_rows:
+            # Scale based on the 100g database standard
+            ratio = float(amount) / 100.0
+            
+            # Aggregate Macronutrients safely
+            total_calories += float(ing_obj.calories or 0) * ratio
+            total_protein += float(ing_obj.protein or 0) * ratio
+            total_fat += float(ing_obj.fat or 0) * ratio
+            total_carbs += float(ing_obj.carbohydrates or 0) * ratio
+
+            # 3. Aggregate Micronutrients using correct relationship name: micronutrient_links
+            # We traverse: Ingredient -> Ingredient_MicroNutrient -> MicroNutrient
+            for link in ing_obj.micronutrient_links:
+                micro_info = link.micronutrient # The MicroNutrient table object
+                name = micro_info.name
+                
+                if name not in micronutrients_map:
+                    micronutrients_map[name] = {
+                        "quantity": 0.0, 
+                        "unit": micro_info.unit
+                    }
+                
+                # Add the quantity from the link scaled by the dish ratio
+                micronutrients_map[name]["quantity"] += float(link.quantity) * ratio
+
+            ingredients_list.append(DishIngredients(
+                ingredient_id=ing_obj.ingredient_id,
                 amount=float(amount),
                 unit=unit,
-                name=ingredient_obj.name
-            )
-            for ingredient_obj, amount, unit in ingredient_rows
-        ]
+                name=ing_obj.name
+            ))
 
+        # Scale totals by the number of servings defined for the dish
+        servings = float(dish_obj.servings or 1.0)
+        
         return DishRead(
             dish_id=dish_obj.dish_id,
             name=dish_obj.name,
             description=dish_obj.description,
-            servings=dish_obj.servings,
+            servings=servings,
             category=dish_obj.category,
             created_at=dish_obj.created_at,
             created_by_username=username,
-            ingredients=ingredients_list or None,
+            ingredients=ingredients_list,
+            # Calculated stats per serving
+            calories=total_calories / servings,
+            protein=total_protein / servings,
+            fat=total_fat / servings,
+            carbohydrates=total_carbs / servings,
+            micronutrients=micronutrients_map
         )
 
     except HTTPException:
         raise
     except Exception as e:
+        # Print the error to your terminal so you can see if something else breaks
+        print(f"DEBUG ERROR: {str(e)}")
         raise HTTPException(500, f"Unexpected error: {str(e)}")
